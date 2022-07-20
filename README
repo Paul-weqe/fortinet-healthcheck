@@ -1,0 +1,3 @@
+Before starting, Run:
+
+`sudo apt install libpq-dev python3-dev libpython3-dev python3.8-dev`

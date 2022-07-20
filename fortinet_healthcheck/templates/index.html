@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class=flashes>
+        {% for category, message in messages %}
+          <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    <h1>Home Page</h1>
+
+    <ul>
+    {% for device in devices %}
+        <li>{{ device.alias }} -> {{ device.hostname }}</li>
+    {% endfor %}
+    </ul>
+
+{% endblock body %}
