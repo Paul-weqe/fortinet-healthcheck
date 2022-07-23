@@ -7,9 +7,13 @@ import os
 
 load_dotenv()
 
-app = Flask(__name__, template_folder='fortinet_healthcheck/templates')
+app = Flask(__name__, template_folder='fortinet_healthcheck/templates',
+            static_folder='fortinet_healthcheck/static',
+            static_url_path='/cdn/')
+
 db.init_app(app)
 migrate = Migrate(app, db)
+
 
 DB_USER = os.getenv('POSTGRES_USER')
 DB_NAME = os.getenv('POSTGRES_DB')

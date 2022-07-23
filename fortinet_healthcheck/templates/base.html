@@ -1,8 +1,76 @@
-<a href="{{ url_for('auth_blueprint.home_page') }}">Home Page</a><br>
-<a href="{{ url_for('devices_blueprint.create_device') }}">Create Device</a><br>
-<a href="{{ url_for('health_check_blueprint.create_health_check_view') }}">Create Health Check</a><br>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock title %}</title>
 
-<hr>
+    <link rel="icon" href="{{ url_for('static', filename='images/icon.png') }}"/>
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css"/>
 
-{% block body %}
-{% endblock body %}
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg bg-secondary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('auth_blueprint.home_page') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('devices_blueprint.list_devices') }}">Devices</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('health_check_blueprint.create_health_check_view') }}">Health Checks</a>
+                    </li>
+                </ul>
+
+                <form class="d-flex" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <ul class="flashes">
+                            {% for message, category in messages %}
+                                <div class="alert alert-info {{ category }}" role="alert">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endwith %}
+
+            </div>
+        </div>
+    </div>
+
+
+    {% block body %}
+    {% endblock body %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    {% block js %}
+    {% endblock js %}
+</body>
+</html>

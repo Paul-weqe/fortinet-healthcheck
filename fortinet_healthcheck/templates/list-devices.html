@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+    <div class="container-fluid mt-5">
+        <div class="row">
+            <div class="col-8">
+                <div class="card">
+
+                    <div class="card-header">
+                        <a href="{{ url_for('devices_blueprint.create_device') }}"><button class="btn btn-success">NEW DEVICE</button></a>
+                        <h3>Devices</h3>
+                    </div>
+
+                    <table class="table table-striped" id="devices-list-table">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Hostname</th>
+                            <th scope="col">Last Health Check</th>
+                        </tr>
+
+                        </thead>
+
+                        <tbody>
+                            {% for device in devices %}
+                                <tr data-href="">
+                                    <th scope="row">{{ loop.index }}</th>
+                                    <td><a href="{{ url_for('devices_blueprint.view_device', device_id=device.id) }}"> {{ device.alias }}</a></td>
+                                    <td>{{ device.hostname }}</td>
+                                    <td>
+                                        {% if device.last_healthcheck != None %}
+                                            {{ device.last_healthcheck.strftime('%b %d %Y %-I:%M%p') }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock body %}
+
+{% block js %}
+
+{% endblock js %}

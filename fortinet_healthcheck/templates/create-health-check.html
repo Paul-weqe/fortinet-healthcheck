@@ -2,16 +2,43 @@
 
 {% block body %}
 
-<form method="post">
-    {{ form.hidden_tag() }}<br>
-    {{ form.name.label }}<br>
-    {{ form.name }}<br>
-    {{ form.command.label }}<br>
-    {{ form.command }}<br>
-    {{ form.description.label }}<br>
-    {{ form.description }}<br>
-    {{ form.check_type.label }}<br>
-    {{ form.check_type }}<br>
-    <button type="submit">CREATE HEALTHCHECK</button>
-</form>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-6">
+                <div class="card p-3">
+                    <form method="post">
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            {{ form.name.label }}
+                            {{ form.name }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.command.label }}
+                            {{ form.command }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.description.label }}
+                            {{ form.description }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.check_type.label }}
+                            {{ form.check_type }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.check_result.label }}
+                            {{ form.check_result }}
+                        </div>
+
+                        <button type="submit" class="btn btn-success">CREATE HEALTHCHECK</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock body %}

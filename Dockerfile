@@ -10,5 +10,4 @@ RUN pip install -r requirements.txt
 EXPOSE 5000
 COPY . .
 
-#CMD ["python", "run.py"]
 CMD ["flask", "run"]

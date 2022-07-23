@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, flash, url_for, redirect
 from fortinet_healthcheck.forms import CreateDeviceForm
-from fortinet_healthcheck.services import devices_service
+from fortinet_healthcheck.models import Device
+from fortinet_healthcheck.services import health_check_service, devices_service
 
 device_blueprint = Blueprint('devices_blueprint', __name__)
 
@@ -16,3 +17,24 @@ def create_device():
         flash('success', f"Successfully added device {device.hostname}")
         return redirect(url_for('auth_blueprint.home_page'))
     return render_template('create-device.html', form=form)
+
+
+@device_blueprint.route("/view-device/<device_id>/")
+def view_device(device_id):
+    checks = health_check_service.get_previous_checks(device_id)
+    device = Device.query.get(device_id)
+    available_checks = health_check_service.get_all_health_checks()
+    return render_template('view-device.html', checks=checks, device=device, available_checks=available_checks)
+
+
+@device_blueprint.route('/list-devices')
+def list_devices():
+    devices = Device.query.all()
+    return render_template('list-devices.html', devices=devices)
+
+
+@device_blueprint.route("/run-all-single-device-checks/<device_id>")
+def run_all_single_device_checks(device_id):
+    health_check_service.run_all_health_checks_for_single_device(device_id)
+    return render_template("run-all-single-device-checks.html")
+

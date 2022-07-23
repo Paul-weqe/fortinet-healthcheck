@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+
+            <div class="col-4">
+                <div class="card">
+                    <div class="card-header">
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-4">
+
+            </div>
+
+            <div class="col-4">
+                <div class="card">
+                    <div class="card-header">
+                        ADD HEALTH CHECK
+                    </div>
+
+                    <div class="card-body">
+                        <form method="post">
+                            {{ form.hidden_tag() }}
+
+                            <div class="mb-3">
+                                {{ form.name.label }}
+                                {{ form.name }}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.command.label }}
+                                {{ form.command }}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.check_type.label }}
+                                {{ form.check_type }}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.check_result }}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.description.label }}
+                                {{ form.description }}
+                            </div>
+
+                            <button type="submit" class="btn btn-success">SAVE</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock body %}
+
+<ul id="check_result">
+    <li>
+        <label for="check_result-0">Check Result-0</label>
+        <table id="check_result-0">
+            <tr>
+                <th>
+                    <label for="check_result-0-name"></label>
+                </th>
+                <td>
+                    <input class="form-control" id="check_result-0-name" name="check_result-0-name" type="text" value="">
+                </td>
+            </tr>
+        </table>
+        <input id="check_result-0-csrf_token" name="check_result-0-csrf_token" type="hidden" value="ImU5YTdiN2I3ZGQwNzJkY2VjYTdhZjI4NGFlNDAxOWYxYjYzMzcyZTgi.YtvGsw.MzbFi9MxGM3nk3BgjGMdWkGk2A4">
+    </li>
+</ul>
+
+{% block js %}
+    <script>
+
+    </script>
+{% endblock js %}

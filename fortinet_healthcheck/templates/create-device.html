@@ -1,18 +1,47 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<form method="POST">
-    {{ form.hidden_tag() }}
-    {{ form.alias.label }}<br>
-    {{ form.alias }}<br>
-    {{ form.hostname.label }}<br>
-    {{ form.hostname }}<br>
-    {{ form.username.label }}<br>
-    {{ form.username }}<br>
-    {{ form.password.label }}<br>
-    {{ form.password }}<br>
-    {{ form.port.label }}<br>
-    {{ form.port }}<br>
-    <button type="submit">CREATE DEVICE</button>
-</form>
+    <div class="container-fluid mt-4">
+        <div class="row justify-content-center">
+
+            <div class="col-5 d-flex justify-content-center" style="width: 40rem;">
+                <div class="card p-4">
+                    <h5 style="color: green;">ADD DEVICE</h5>
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ form.alias.label }}
+                            {{ form.alias }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.hostname.label }}
+                            {{ form.hostname }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.username.label }}
+                            {{ form.username }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.password.label }}
+                            {{ form.password }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.port.label }}
+                            {{ form.port }}
+                        </div>
+
+                        <button type="submit" class="btn btn-success">ADD DEVICE</button>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
 {% endblock body %}
