@@ -54,7 +54,7 @@ def run_multiple_health_checks(device_id: int, health_check_ids: list):
 
     device = Device.query.get(device_id)
     conn = create_connection(hostname=device.hostname, username=device.username, password=device.encoded_password)
-    result = {str(device_id): {}}
+    result = {str(device_id): {}, 'group_id': check_group.id}
 
     for hc_id in health_check_ids:
         health_check = HealthCheck.query.get(hc_id)

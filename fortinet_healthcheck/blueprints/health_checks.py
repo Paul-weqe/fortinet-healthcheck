@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, flash, url_for, redirect
-from fortinet_healthcheck.services.health_check_service import create_health_check
+from fortinet_healthcheck.services.health_check_service import create_health_check, run_all_health_checks_for_single_device
 from fortinet_healthcheck.forms import CreateHealthCheckForm
 
 health_check_blueprint = Blueprint('health_check_blueprint', __name__)
@@ -32,3 +32,10 @@ def create_health_check_view():
 def view_health_checks():
     form = CreateHealthCheckForm()
     return render_template('view-health-checks.html', form=form)
+
+
+@health_check_blueprint.route('/run-device-health-check/<device_id>')
+def run_device_health_check(device_id):
+    result = run_all_health_checks_for_single_device(device_id)[str[device_id]]
+    return render_template('run-device-health-check.html', result=result)
+
