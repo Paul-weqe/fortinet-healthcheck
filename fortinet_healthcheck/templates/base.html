@@ -14,7 +14,7 @@
 
     <nav class="navbar navbar-expand-lg bg-secondary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Navbar</a>
+            <a class="navbar-brand" href="{{ url_for('auth_blueprint.home_page') }}">Health Check</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -27,11 +27,11 @@
                         <a class="nav-link active" aria-current="page" href="{{ url_for('auth_blueprint.home_page') }}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('devices_blueprint.list_devices') }}">Devices</a>
+                        <a class="nav-link active" href="{{ url_for('devices_blueprint.list_devices') }}">Devices</a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('health_check_blueprint.create_health_check_view') }}">Health Checks</a>
+                        <a class="nav-link active" href="{{ url_for('health_check_blueprint.view_health_checks') }}">Health Checks</a>
                     </li>
                 </ul>
 

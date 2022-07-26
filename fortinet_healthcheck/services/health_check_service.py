@@ -43,7 +43,12 @@ def get_health_check_expected_outputs(health_check: HealthCheck):
 
 
 def run_all_health_checks_for_single_device(device_id: int):
-    health_checks_ids = list(HealthCheck.query.with_entities(HealthCheck.id).all()[0])
+    if HealthCheck.query.count() == 0:
+        return {str(device_id): {}, 'group_id': None}
+    query_ids = list(HealthCheck.query.with_entities(HealthCheck.id).all())
+    health_checks_ids = []
+    for entry in query_ids:
+        health_checks_ids.append(entry[0])
     return run_multiple_health_checks(device_id, health_checks_ids)
 
 
@@ -74,6 +79,7 @@ def run_multiple_health_checks(device_id: int, health_check_ids: list):
         db.session.add(check)
         db.session.commit()
 
+    conn.disconnect()
     return result
 
 
@@ -94,8 +100,13 @@ def run_check(device_id: int, health_check_id: int):
         hostname=device.hostname, username=device.username, password=device.encoded_password
     )
     base_health_check = BaseHealthCheck(conn)
+    conn.disconnect()
 
 
 def get_all_health_checks():
     health_checks = HealthCheck.query.all()
     return health_checks
+
+
+def get_all_health_check_groups():
+    return CheckGroup.query.all()

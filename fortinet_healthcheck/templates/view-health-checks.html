@@ -7,8 +7,38 @@
 
             <div class="col-4">
                 <div class="card">
+
                     <div class="card-header">
+                        PREVIOUS RUNS<br>
+                        <a href="{{ url_for('health_check_blueprint.run_all_health_checks') }}" class="mt-1">Rerun all Checks</a>
                     </div>
+
+                    <div class="card-body">
+
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Device</th>
+                                    <th scope="col">When Run</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for group in check_groups %}
+                                    <tr>
+                                        <th scope="row">{{ loop.index }}</th>
+                                        <td><a href="{{ url_for('devices_blueprint.view_device', device_id=group.device.id) }}">{{ group.device.alias }}</a></td>
+                                        <td>{{ group.timestamp.strftime("%B %d %Y %-I:%M %p") }}</td>
+                                        <td><a href="">Details</a></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                    </div>
+
                 </div>
             </div>
 

@@ -22,19 +22,46 @@ class User(db.Model):
 class Device(db.Model):
     __tablename__ = "devices"
     id = db.Column(db.Integer, primary_key=True)
-    alias = db.Column(db.String, unique=True)
+    alias = db.Column(db.String)
     hostname = db.Column(db.String)
     username = db.Column(db.String)
     port = db.Column(db.Integer)
     encoded_password = db.Column(db.String(100))
     last_healthcheck = db.Column(db.DateTime, nullable=True)
 
-    # FKs
     checks = db.relationship('Check', backref='device', lazy=True, order_by='Check.timestamp.desc()')
     check_groups = db.relationship('CheckGroup', backref='device', lazy=True, order_by='CheckGroup.timestamp.desc()')
 
     def __repr__(self):
         return f"<Device {self.hostname}>"
+
+
+class CheckGroup(db.Model):
+    __tablename__ = "check_groups"
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, server_default=func.now())
+    checks = db.relationship('Check', backref='check_group', lazy=True)
+    device_id = db.Column(db.Integer, db.ForeignKey('devices.id'), nullable=True)
+
+    @hybrid_property
+    def successful_checks(self):
+        count = 0
+        for check in self.checks:
+            if check.is_successful:
+                count += 1
+        return count
+
+    @hybrid_property
+    def failed_checks(self):
+        return len(self.checks) - self.successful_checks
+
+    @hybrid_property
+    def percentage_success(self):
+        total_checks = len(self.checks)
+        return (self.successful_checks / total_checks) * 100
+
+    def __str__(self):
+        return f"<CheckGroupId: {self.id}>"
 
 
 class HealthCheck(db.Model):
@@ -48,6 +75,10 @@ class HealthCheck(db.Model):
     # FKs
     check_outputs = db.relationship('HealthCheckOutput', backref='health_check', lazy=True)
     checks = db.relationship('Check', backref='health_check', lazy=True)
+
+    @hybrid_property
+    def checks_count(self):
+        return len(self.checks)
 
     def __repr__(self):
         return f"<[HealthCheck: {self.name}] [Command: {self.command}]>"
@@ -63,15 +94,6 @@ class HealthCheckOutput(db.Model):
         return f"<HealthCheck Output: [{self.expected_output}]>"
 
 
-class CheckGroup(db.Model):
-    __tablename__ = "check_groups"
-    id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime, server_default=func.now())
-    checks = db.relationship('Check', backref='check_group', lazy=True)
-    device_id = db.Column(db.Integer, db.ForeignKey('devices.id'), nullable=True)
-
-    def __str__(self):
-        return f"<CheckGroupId: {self.id}>"
 
 
 class Check(db.Model):

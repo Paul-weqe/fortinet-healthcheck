@@ -40,12 +40,11 @@ class BaseHealthCheck:
     
     @staticmethod
     def check_and_in_output(output: str, expected_substrings: list):
-        is_healthy = True
         for substring in expected_substrings:
             if substring not in output:
-                is_healthy = False
-                break
-        return is_healthy
+                return False
+
+        return True
 
 # conn = create_connection('176.9.42.123', 'admin', 'Insoft123!')
 # health_check = HealthCheck(conn)

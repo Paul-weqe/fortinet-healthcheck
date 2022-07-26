@@ -13,7 +13,8 @@
                 </div>
             </div>
         </div>
-        <div class="row">
+
+        <div class="row mb-2">
 
             {# GENERAL DEVICE INFORMATION #}
             <div class="col-lg-6 col-sm-12 mt-2">
@@ -51,7 +52,7 @@
                             </ul>
                         </div>
                         <div class="col-6">
-                            <a href="{{ url_for('health_check_blueprint.view_health_checks') }}">Run Health Checks</a>
+                            <a href="{{ url_for('health_check_blueprint.run_device_health_check', device_id=device.id) }}">Run Health Checks</a>
 
                             <ul class="list-group">
                                 {% for health_check in available_checks %}
@@ -63,6 +64,42 @@
 
                     </div>
 
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-header">
+                        PREVIOUS RUNS
+                    </div>
+                    <div class="card-body">
+
+                        <table class="table">
+                            <thead>
+                                <th scope="col">#</th>
+                                <th scope="col">Time</th>
+                                <th scope="col">Checks Run</th>
+                                <th scope="col">Checks Passed</th>
+                                <th scope="col">Pass percentage</th>
+                            </thead>
+                            <tbody>
+
+                                {% for group in device.check_groups %}
+                                    <tr>
+                                        <th scope="row">{{ loop.index }}</th>
+                                        <td>{{ group.timestamp.strftime("%B %d %Y %-I:%M %p") }}</td>
+                                        <td>{{ group.successful_checks + group.failed_checks  }}</td>
+                                        <td>{{ group.successful_checks }}</td>
+                                        <td
+                                                {% if group.percentage_success >= 50 %}
+                                                    style="color: green;"
+                                                {% else %}
+                                                    style="color: red;"
+                                                {% endif %}
+                                        >{{ group.percentage_success }} %</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -104,6 +141,47 @@
 
 
         </div>
+
+        <div class="row">
+            <div class="col-lg-6 col-sm-12">
+{#                <div class="card">#}
+{#                    <div class="card-header">#}
+{#                        PREVIOUS RUNS#}
+{#                    </div>#}
+{#                    <div class="card-body">#}
+{##}
+{#                        <table class="table">#}
+{#                            <thead>#}
+{#                                <th scope="col">#</th>#}
+{#                                <th scope="col">Time</th>#}
+{#                                <th scope="col">Checks Run</th>#}
+{#                                <th scope="col">Checks Passed</th>#}
+{#                                <th scope="col">Pass percentage</th>#}
+{#                            </thead>#}
+{#                            <tbody>#}
+{##}
+{#                                {% for group in device.check_groups %}#}
+{#                                    <tr>#}
+{#                                        <th scope="row">{{ loop.index }}</th>#}
+{#                                        <td>{{ group.timestamp.strftime("%B %d %Y %-I:%M %p") }}</td>#}
+{#                                        <td>{{ group.successful_checks + group.failed_checks  }}</td>#}
+{#                                        <td>{{ group.successful_checks }}</td>#}
+{#                                        <td#}
+{#                                                {% if group.percentage_success >= 50 %}#}
+{#                                                    style="color: green;"#}
+{#                                                {% else %}#}
+{#                                                    style="color: red;"#}
+{#                                                {% endif %}#}
+{#                                        >{{ group.percentage_success }} %</td>#}
+{#                                    </tr>#}
+{#                                {% endfor %}#}
+{#                            </tbody>#}
+{#                        </table>#}
+{#                    </div>#}
+{#                </div>#}
+            </div>
+        </div>
+
     </div>
 
 {% endblock body %}
