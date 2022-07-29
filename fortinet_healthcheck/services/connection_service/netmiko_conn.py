@@ -5,9 +5,9 @@ class FortinetException(Exception):
     pass
 
 
-def create_connection(hostname: str, username: str, password: str):
+def create_connection(hostname: str, username: str, password: str, device_type: str = 'fortinet'):
     conn_details = {
-        'device_type': 'fortinet',
+        'device_type': device_type,
         'host': hostname, 
         'username': username, 
         'password': password

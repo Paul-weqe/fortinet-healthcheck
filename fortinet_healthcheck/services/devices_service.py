@@ -15,3 +15,6 @@ def get_all_devices():
     devices = Device.query.all()
     return devices
 
+
+def get_single_device(id: int) -> Device:
+    return Device.query.get(id)

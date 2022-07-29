@@ -6,7 +6,9 @@ from fortinet_healthcheck.models import HealthCheck, Device, Check, HealthCheckO
 from extensions import db
 
 
-def create_health_check(name: str, command: str, check_type: str, description: str = "", check_outputs: list = []):
+def create_health_check(name: str, command: str, check_type: str, description: str = "", check_outputs=None):
+    if check_outputs is None:
+        check_outputs = []
     allowed_check_types = [
         "or", "and", "not"
     ]
@@ -87,20 +89,6 @@ def get_previous_checks(device_id: int):
     device = Device.query.get(device_id)
     checks = device.checks
     return checks
-
-
-def run_check(device_id: int, health_check_id: int):
-    device = Device.query.get(device_id)
-    health_check = HealthCheck.query.get(health_check_id)
-    expected_outputs = []
-    for c in health_check.check_outputs:
-        expected_outputs.append(c.expected_output)
-
-    conn = create_connection(
-        hostname=device.hostname, username=device.username, password=device.encoded_password
-    )
-    base_health_check = BaseHealthCheck(conn)
-    conn.disconnect()
 
 
 def get_all_health_checks():

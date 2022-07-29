@@ -19,6 +19,7 @@ class User(db.Model):
         return f"<User {self.username}>"
 
 
+# Assume device is a Fortinet
 class Device(db.Model):
     __tablename__ = "devices"
     id = db.Column(db.Integer, primary_key=True)
@@ -36,6 +37,20 @@ class Device(db.Model):
         return f"<Device {self.hostname}>"
 
 
+"""
+ RUN
+ 
+ Each time a healthcheck is run on a device, a number of checks are executed. 
+ e.g we can have 5 checks (one for interface, one for uptime etc...)
+ 
+ Each time we have a run of the healthchecks, we create a checkgroup that contains
+ the checks that have been run and their output. If successful or not. 
+ 
+ We therefore have each of the checks being contained in a checkgroup 
+ and each device has multiple check groups. Later on we can see what the output for each 
+ of the different healthchecks were depeinding on when it was run. 
+ 
+"""
 class CheckGroup(db.Model):
     __tablename__ = "check_groups"
     id = db.Column(db.Integer, primary_key=True)
@@ -69,6 +84,8 @@ class HealthCheck(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), unique=True)
     command = db.Column(db.String(300), unique=True)
+
+    # check type ('and', 'or' and 'not')
     check_type = db.Column(db.String(10))
     description = db.Column(db.Text, default="")
 
