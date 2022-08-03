@@ -3,8 +3,11 @@ from fortinet_healthcheck.forms import CreateDeviceForm
 from fortinet_healthcheck.services import health_check_service, devices_service
 from fortinet_healthcheck.services.devices_service import get_all_devices
 
+# Initialize an object of a blueprint and pass in the blueprint name 
+# for this specific component which in our case is ‘device_blueprint’
 device_blueprint = Blueprint('devices_blueprint', __name__)
 
+# Creating REST APIs
 
 @device_blueprint.route("/create-device", methods=['GET', 'POST'])
 def create_device():

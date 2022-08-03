@@ -1,6 +1,9 @@
 from flask import Blueprint, render_template, flash, url_for, redirect
 from fortinet_healthcheck.services import health_check_service, devices_service
 from fortinet_healthcheck.forms import CreateHealthCheckForm
+
+# Initialize an object of a blueprint and pass in the blueprint name 
+# for this specific component which in our case is ‘health_check_blueprint’
 health_check_blueprint = Blueprint('health_check_blueprint', __name__)
 
 
@@ -12,6 +15,7 @@ def parse_check_in_output(output: str) -> list:
         output_list.append(x.strip())
     return output_list
 
+# Creating REST APIs
 
 @health_check_blueprint.route("/create-health-check", methods=['GET', 'POST'])
 def create_health_check_view():

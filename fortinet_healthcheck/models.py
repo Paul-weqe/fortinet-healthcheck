@@ -1,3 +1,5 @@
+# Models is for database stuff
+
 from extensions import db
 from sqlalchemy.sql import func
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -19,7 +21,7 @@ class User(db.Model):
         return f"<User {self.username}>"
 
 
-# Assume device is a Fortinet
+# Assume device is a FortiGate
 class Device(db.Model):
     __tablename__ = "devices"
     id = db.Column(db.Integer, primary_key=True)
