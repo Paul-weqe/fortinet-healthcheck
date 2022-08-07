@@ -22,11 +22,16 @@ class User(db.Model):
 
 
 # Assume device is a FortiGate
+# create a devices database object and its associated primary key and various columns
+# This is the database model object
+# We declare a database model object with id as the primary key and string fields for
+# alias, hostname, username, and encoded_password
 class Device(db.Model):
     __tablename__ = "devices"
     id = db.Column(db.Integer, primary_key=True)
     alias = db.Column(db.String)
     hostname = db.Column(db.String)
+    #vendor = db.Column(db.String(40))
     username = db.Column(db.String)
     port = db.Column(db.Integer)
     encoded_password = db.Column(db.String(100))

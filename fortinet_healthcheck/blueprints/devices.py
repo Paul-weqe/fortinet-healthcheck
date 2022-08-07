@@ -7,7 +7,8 @@ from fortinet_healthcheck.services.devices_service import get_all_devices
 # for this specific component which in our case is ‘device_blueprint’
 device_blueprint = Blueprint('devices_blueprint', __name__)
 
-# Creating REST APIs
+# Creating REST API. Use the route decorator to tell Flask which URL
+# should be handled by the create_device() function
 
 @device_blueprint.route("/create-device", methods=['GET', 'POST'])
 def create_device():
