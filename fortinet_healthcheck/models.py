@@ -7,16 +7,24 @@ from datetime import datetime
 
 
 class User(db.Model):
+
     __tablename__ = "users"
-    id = db.Column(db.Integer, primary_key=True)
+
+    # primary_key=True defines the id column as a primary key, which will assign 
+    # it a unique value by the database for each entry
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(100), nullable=False)
+    
     confirmation_sent = db.Column(db.Boolean, default=False)
     confirmed_at = db.Column(db.DateTime, nullable=True)
     confirmation_token = db.Column(db.String, unique=True)
     is_confirmed = db.Column(db.Boolean, default=False)
 
+    # The __repr__ method returns the string representation of an object. 
+    # Typically, the __repr__() returns a string that can be executed and 
+    # ield the same value as the object.
     def __repr__(self):
         return f"<User {self.username}>"
 
@@ -27,8 +35,10 @@ class User(db.Model):
 # We declare a database model object with id as the primary key and string fields for
 # alias, hostname, username, and encoded_password
 class Device(db.Model):
+
     __tablename__ = "devices"
-    id = db.Column(db.Integer, primary_key=True)
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     alias = db.Column(db.String)
     hostname = db.Column(db.String)
     #vendor = db.Column(db.String(40))
