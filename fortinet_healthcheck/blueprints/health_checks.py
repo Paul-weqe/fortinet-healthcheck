@@ -16,6 +16,9 @@ def parse_check_in_output(output: str) -> list:
     return output_list
 
 # Creating REST APIs
+# A decorator is a design pattern in Python that allows a user to add new 
+# functionality to an existing object without modifying its structure. 
+# Decorators are usually called before the definition of a function you want to decorate.
 
 @health_check_blueprint.route("/create-health-check", methods=['GET', 'POST'])
 def create_health_check_view():
