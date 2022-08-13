@@ -5,7 +5,7 @@ from sqlalchemy.sql import func
 from sqlalchemy.ext.hybrid import hybrid_property
 from datetime import datetime
 
-
+# User inherits all the characteristics and variables related to db.Model
 class User(db.Model):
 
     __tablename__ = "users"
@@ -69,7 +69,9 @@ class Device(db.Model):
  
 """
 class CheckGroup(db.Model):
+
     __tablename__ = "check_groups"
+
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, server_default=func.now())
     checks = db.relationship('Check', backref='check_group', lazy=True)
@@ -97,7 +99,9 @@ class CheckGroup(db.Model):
 
 
 class HealthCheck(db.Model):
+
     __tablename__ = "health_checks"
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), unique=True)
     command = db.Column(db.String(300), unique=True)
@@ -119,7 +123,9 @@ class HealthCheck(db.Model):
 
 
 class HealthCheckOutput(db.Model):
+
     __tablename__ = "health_check_outputs"
+
     id = db.Column(db.Integer, primary_key=True)
     health_check_id = db.Column(db.Integer, db.ForeignKey('health_checks.id'), nullable=False)
     expected_output = db.Column(db.String, nullable=False)
@@ -131,7 +137,9 @@ class HealthCheckOutput(db.Model):
 
 
 class Check(db.Model):
+
     __tablename__ = "checks"
+
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, server_default=func.now())
     is_successful = db.Column(db.Boolean, nullable=True)
