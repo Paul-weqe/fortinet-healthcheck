@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, flash, url_for, redirect
 from fortinet_healthcheck.forms import CreateDeviceForm
 from fortinet_healthcheck.services import health_check_service, devices_service
 from fortinet_healthcheck.services.devices_service import get_all_devices
+from fortinet_healthcheck.services import vendors_service
 
 # Initialize an object of a blueprint and pass in the blueprint name 
 # for this specific component which in our case is ‘device_blueprint’
@@ -9,14 +10,15 @@ device_blueprint = Blueprint('devices_blueprint', __name__)
 
 # Creating REST API. Use the route decorator to tell Flask which URL
 # should be handled by the create_device() function
-
 @device_blueprint.route("/create-device", methods=['GET', 'POST'])
 def create_device():
+    VENDOR_CHOICES = list(vendors_service.get_vendor_choices())
     form = CreateDeviceForm()
+    form.vendor.choices = VENDOR_CHOICES
     if form.validate_on_submit():
         device = devices_service.create_device(
             alias=form.alias.data, hostname=form.hostname.data, username=form.username.data,
-            port=form.port.data, password=form.password.data
+            port=form.port.data, password=form.password.data, vendor_id=form.vendor.data
         )
         flash('success', f"Successfully added device {device.hostname}")
         return redirect(url_for('auth_blueprint.home_page'))

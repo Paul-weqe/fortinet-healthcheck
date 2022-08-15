@@ -30,4 +30,5 @@ EXPOSE 5000
 COPY . .
 
 # Set the default command for the container to flask run
-CMD ["flask", "run"]
+# CMD ["flask", "run"]
+CMD ["python", "run.py"]

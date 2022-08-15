@@ -13,4 +13,3 @@ auth_blueprint = Blueprint('auth_blueprint', __name__)
 def home_page():
     devices = devices_service.get_all_devices()
     return render_template("index.html", devices=devices)
-

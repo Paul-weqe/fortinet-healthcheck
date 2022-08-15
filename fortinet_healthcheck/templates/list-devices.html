@@ -18,6 +18,7 @@
                             <th scope="col">#</th>
                             <th scope="col">Name</th>
                             <th scope="col">Hostname</th>
+                            <th scope="col">Vendor</th>
                             <th scope="col">Last Health Check</th>
                         </tr>
 
@@ -29,6 +30,7 @@
                                     <th scope="row">{{ loop.index }}</th>
                                     <td><a href="{{ url_for('devices_blueprint.view_device', device_id=device.id) }}"> {{ device.alias }}</a></td>
                                     <td>{{ device.hostname }}</td>
+                                    <td>{{ device.vendor.vendor_name }}</td>
                                     <td>
                                         {% if device.last_healthcheck != None %}
                                             {{ device.last_healthcheck.strftime('%b %d %Y %-I:%M%p') }}

@@ -8,8 +8,20 @@
 #  to your application. It aims to simplify using SQLAlchemy with Flask by 
 # providing useful defaults and extra helpers that make it easier to accomplish 
 # common tasks.
-
 from flask_sqlalchemy import SQLAlchemy
 
 # Creating an instance of the SQLAlchemy object
 db = SQLAlchemy()
+
+# Context Manager for the db sessions
+# To always ensure they open and close whatever the user accesses
+# a database session. 
+class DbSessionContext(object):
+    def __init__(self):
+        self.db = db
+
+    def __enter__(self):
+        return self.db.session
+
+    def __exit__(self, type, value, traceback):
+        self.db.session.close()

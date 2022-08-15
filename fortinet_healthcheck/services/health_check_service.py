@@ -3,10 +3,10 @@ from datetime import datetime
 from .connection_service.base_healthcheck import BaseHealthCheck
 from .connection_service.netmiko_conn import create_connection
 from fortinet_healthcheck.models import HealthCheck, Device, Check, HealthCheckOutput, CheckGroup
-from extensions import db
+from extensions import DbSessionContext
 
 
-def create_health_check(name: str, command: str, check_type: str, description: str = "", check_outputs=None):
+def create_health_check(name: str, command: str, check_type: str, description: str = "", check_outputs=None, vendor_id=None):
     if check_outputs is None:
         check_outputs = []
     allowed_check_types = [
@@ -19,8 +19,11 @@ def create_health_check(name: str, command: str, check_type: str, description: s
     health_check = HealthCheck(
         name=name, command=command, check_type=check_type, description=description
     )
-    db.session.add(health_check)
-    db.session.commit()
+    health_check.vendor_id = int(vendor_id) if vendor_id is not None else None
+    
+    with DbSessionContext() as session:
+        session.add(health_check)
+        session.commit()
 
     for output in check_outputs:
         create_health_check_output(health_check.id, output)
@@ -32,8 +35,10 @@ def create_health_check_output(health_check_id: int, expected_output) -> HealthC
     health_check_output = HealthCheckOutput(
         health_check_id=health_check_id, expected_output=expected_output
     )
-    db.session.add(health_check_output)
-    db.session.commit()
+    with DbSessionContext() as session:
+        session.add(health_check_output)
+        session.commit()
+    
     return health_check_output
 
 
@@ -56,8 +61,10 @@ def run_all_health_checks_for_single_device(device_id: int):
 
 def run_multiple_health_checks(device_id: int, health_check_ids: list):
     check_group = CheckGroup(device_id=device_id)
-    db.session.add(check_group)
-    db.session.commit()
+    
+    with DbSessionContext() as session:
+        session.add(check_group)
+        session.commit()
 
     device = Device.query.get(device_id)
     conn = create_connection(hostname=device.hostname, username=device.username, password=device.encoded_password)
@@ -78,8 +85,10 @@ def run_multiple_health_checks(device_id: int, health_check_ids: list):
             device_id=device_id, health_check_id=hc_id, is_successful=hc_result, timestamp=time_completed,
             check_group_id = check_group.id
         )
-        db.session.add(check)
-        db.session.commit()
+
+        with DbSessionContext() as session:
+            session.add(check)
+            session.commit()
 
     conn.disconnect()
     return result
