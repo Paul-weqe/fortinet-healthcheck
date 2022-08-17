@@ -7,10 +7,39 @@
 
             <div class="col-4">
                 <div class="card">
+                    <div class="card-header">
+                        <h5>LIST OF HEALTH CHECKS</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col"></th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for health_check in health_checks %}
+                                    <tr>
+                                        <th scope="row">{{ loop.index }}</th>
+                                        <td>{{ health_check.name }}</td>
+                                        <td><a href="{{ url_for('health_check_blueprint.delete_healthcheck_view', healthcheck_id=health_check.id) }}" class="btn btn-danger">DELETE</a></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-4">
+                <div class="card">
 
                     <div class="card-header">
                         PREVIOUS RUNS<br>
-                        <a href="{{ url_for('health_check_blueprint.run_all_health_checks') }}" class="mt-1">Rerun all Checks</a>
+                        <a href="{{ url_for('health_check_blueprint.run_all_health_checks') }}" class="mt-1">Run all Checks</a>
                     </div>
 
                     <div class="card-body">
@@ -42,9 +71,7 @@
                 </div>
             </div>
 
-            <div class="col-4">
-
-            </div>
+            
 
             <div class="col-4">
                 <div class="card">

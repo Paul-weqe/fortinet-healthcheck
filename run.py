@@ -12,7 +12,7 @@ load_dotenv()
 # Create an app variable and initialize Flask
 app = Flask(__name__, template_folder='fortinet_healthcheck/templates',
             static_folder='fortinet_healthcheck/static',
-            static_url_path='/cdn/')
+            static_url_path='/static/')
 
 db.init_app(app)
 migrate = Migrate(app, db)

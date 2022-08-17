@@ -12,6 +12,10 @@ SELECT_KW = {
     'aria-label': 'Default select example'
 }
 
+NETMIKO_ALIAS_KW = INPUT_KW
+NETMIKO_ALIAS_KW['aria-describedby'] = "passwordHelpBlock"
+
+
 class CreateDeviceForm(FlaskForm):
     alias = StringField('Device Name', validators=[DataRequired()], render_kw=INPUT_KW)
     hostname = StringField('Device hostname/IP', validators=[DataRequired()], render_kw=INPUT_KW)
@@ -43,3 +47,7 @@ class CreateHealthCheckForm(FlaskForm):
     vendor = SelectField('Vendor', choices=[], render_kw=SELECT_KW)
     check_result = TextAreaField('Check Results', render_kw=INPUT_KW)
     description = TextAreaField('Description', render_kw=INPUT_KW)
+
+class CreateVendorForm(FlaskForm):
+    vendor_name = StringField('Vendor Name', validators=[DataRequired()], render_kw=INPUT_KW)
+    netmiko_alias = StringField('Netmiko Alias', validators=[DataRequired()], render_kw=NETMIKO_ALIAS_KW)

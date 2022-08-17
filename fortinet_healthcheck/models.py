@@ -110,6 +110,8 @@ class CheckGroup(db.Model):
     @hybrid_property
     def percentage_success(self):
         total_checks = len(self.checks)
+        if total_checks == 0:
+            return 0
         return (self.successful_checks / total_checks) * 100
 
     def __str__(self):

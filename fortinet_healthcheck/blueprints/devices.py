@@ -29,7 +29,7 @@ def create_device():
 def view_device(device_id):
     checks = health_check_service.get_previous_checks(device_id)
     device = devices_service.get_single_device(device_id)
-    available_checks = health_check_service.get_all_health_checks()
+    available_checks = health_check_service.get_all_device_health_checks(device_id)
     return render_template('view-device.html', checks=checks, device=device, available_checks=available_checks)
 
 
@@ -43,4 +43,8 @@ def list_devices():
 def run_all_single_device_checks(device_id):
     health_check_service.run_all_health_checks_for_single_device(device_id)
     return render_template("run-all-single-device-checks.html")
+
+@device_blueprint.route("/single-hc-single-device/<device_id>/<healthcheck_id>")
+def run_single_healthcheck_for_single_device(device_id, healthcheck_id):
+    return render_template("single-healthcheck-single-device.html")
 

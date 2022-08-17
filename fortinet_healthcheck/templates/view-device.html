@@ -52,11 +52,11 @@
                             </ul>
                         </div>
                         <div class="col-6">
-                            <a href="{{ url_for('health_check_blueprint.run_device_health_check', device_id=device.id) }}">Run Health Checks</a>
+                            <a href="{{ url_for('health_check_blueprint.run_device_health_check', device_id=device.id) }}">Run All Device Health Checks</a>
 
                             <ul class="list-group">
                                 {% for health_check in available_checks %}
-                                    <li class="list-group-item">{{ health_check.name }}</li>
+                                    <li class="list-group-item">{{ health_check.name }} <a class="ms-5" href="">Run Check</a></li>
                                 {% endfor %}
                             </ul>
                             <br>

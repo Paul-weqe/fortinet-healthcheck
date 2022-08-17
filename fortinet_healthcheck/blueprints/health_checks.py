@@ -32,13 +32,14 @@ def create_health_check_view():
             description=form.description.data, check_outputs=outputs_list, vendor_id=form.vendor.data
         )
         flash('success', f'successfully created health check {health_check.name}')
-        return redirect(url_for('auth_blueprint.home_page'))
+        return redirect(url_for('health_check_blueprint.view_health_checks'))
     return render_template('create-health-check.html', form=form)
 
 
 @health_check_blueprint.route('/view-health-checks', methods=['GET', 'POST'])
 def view_health_checks():
     check_groups = health_check_service.get_all_health_check_groups()
+    health_checks = health_check_service.get_all_health_checks()
 
     form = CreateHealthCheckForm()
     VENDOR_CHOICES = list(vendors_service.get_vendor_choices())
@@ -52,7 +53,7 @@ def view_health_checks():
         )
         flash('success', f'successfully created health check {health_check.name}')
         return redirect(url_for('auth_blueprint.home_page'))
-    return render_template('view-health-checks.html', form=form, check_groups=check_groups)
+    return render_template('view-health-checks.html', form=form, check_groups=check_groups, health_checks=health_checks)
 
 
 @health_check_blueprint.route('/run-device-health-check/<device_id>')
@@ -67,6 +68,12 @@ def run_all_health_checks():
 
     for device in devices:
         health_check_service.run_all_health_checks_for_single_device(device.id)
-
-    result = health_check_service.run_all_health_checks_for_single_device()
+        
     return redirect(url_for('health_check_blueprint.view_health_checks'))
+
+@health_check_blueprint.route('/delete-health-check/<healthcheck_id>')
+def delete_healthcheck_view(healthcheck_id):
+    health_check_service.delete_healthcheck(healthcheck_id)
+    flash("danger", "Succesfully deleted healthcheck")
+    return redirect(url_for('health_check_blueprint.view_health_checks'))
+

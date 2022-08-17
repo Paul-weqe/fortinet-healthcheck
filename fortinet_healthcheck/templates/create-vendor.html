@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+
+            <div class="col-4">                
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Create Vendor</h5>
+                        <hr>
+                        <form method="POST">
+                            {{ form.hidden_tag() }}
+
+                            <div class="mb-3">
+                                {{ form.vendor_name.label }}
+                                {{ form.vendor_name }}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.netmiko_alias.label }}
+
+                                <div id="passwordHelpBlock" class="form-text">
+                                    This is the name that is used for the specific 
+                                    vendor on Netmiko. <a href="https://github.com/ktbyers/netmiko/blob/7aac84dcad5f1e4bd301018bfebfde96fd1877fc/netmiko/ssh_dispatcher.py#L134" target="_blank">Here</a> is a list of the vendor 
+                                    names as allowed on Netmiko 
+                                </div>
+                                {{ form.netmiko_alias }}
+                            </div>
+
+                            <div class="mb-3">
+                                <button type="submit" class="btn btn-success">Add Vendor</button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>List of Current Vendors</h5>
+                        <hr>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Vendor Name</th>
+                                    <th scope="col">Netmiko Alias</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for vendor in all_vendors %}
+                                    <tr>
+                                        <th scope="row">{{ loop.index }}</th>
+                                        <td>{{ vendor.vendor_name }}</td>
+                                        <td>{{ vendor.netmiko_alias }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock body %}
