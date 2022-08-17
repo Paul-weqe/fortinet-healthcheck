@@ -39,7 +39,12 @@
                             {{ form.check_result }}
                         </div>
 
-                        <button type="submit" class="btn btn-success">CREATE HEALTHCHECK</button>
+                        {% if hc_id == None %}
+                            <button type="submit" class="btn btn-success">CREATE HEALTHCHECK</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-success">EDIT HEALTHCHECK</button>
+                        {% endif %}
+                        
                     </form>
                 </div>
             </div>

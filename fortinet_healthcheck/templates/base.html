@@ -58,7 +58,7 @@
                     {% if messages %}
                         <ul class="flashes">
                             {% for message, category in messages %}
-                                <div class="alert alert-info {{ category }}" role="alert">
+                                <div class="alert alert-{{ category }}" role="alert">
                                     {{ message }}
                                 </div>
                             {% endfor %}

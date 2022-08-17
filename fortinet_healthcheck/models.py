@@ -157,15 +157,21 @@ class HealthCheck(db.Model):
 
     # Foreign Keys
     health_check_category_id = db.Column(db.Integer, db.ForeignKey('health_check_categories.id'), nullable=True)
-    device_id = db.Column(db.Integer, db.ForeignKey('devices.id'), nullable=True)
     vendor_id = db.Column(db.Integer, db.ForeignKey('vendors.id'), nullable=True)
 
     @hybrid_property
     def checks_count(self):
         return len(self.checks)
 
+    @hybrid_property
+    def check_output_text(self):
+        output_str = ""
+        for output in self.check_outputs:
+            output_str += f"{output.expected_output}\n"
+        return output_str
+
     def __repr__(self):
-        return f"<[HealthCheck: {self.name}] [Command: {self.command}]>"
+        return f"<[HealthCheck: {self.name}]>"
 
 
 class HealthCheckOutput(db.Model):

@@ -26,6 +26,23 @@ def create_health_check(name: str, command: str, check_type: str, description: s
     return health_check
 
 
+def edit_healthcheck(
+        health_check_id: int, name: str, command: str, check_type: str, description: str="", check_outputs=None, vendor_id=None
+    ):
+    health_check = HealthCheck.query.get(health_check_id)
+    health_check.name = name
+    health_check.command = command 
+    health_check.check_type = check_type
+    health_check.description = description
+    if check_outputs is not None:
+        for output in health_check.check_outputs:
+            delete_from_db(output)
+        for output in check_outputs:
+            create_health_check_output(health_check.id, output)
+    commit_changes()
+    return health_check
+
+
 def delete_healthcheck(healthcheck_id):
     healthcheck = HealthCheck.query.get(healthcheck_id)
     checks = healthcheck.checks
@@ -59,6 +76,21 @@ def get_health_check_expected_outputs(health_check: HealthCheck):
     for x in health_check.check_outputs:
         expected_outputs.append(x.expected_output)
     return expected_outputs
+
+
+def run_checks_for_healthcheck(healthcheck_id: int):
+    with DbSessionContext() as session:
+        health_checks = session.query(
+            HealthCheck, Device
+        ).filter(
+            HealthCheck.vendor_id == Device.vendor_id
+        ).filter(
+            HealthCheck.id == healthcheck_id 
+        ).all()
+
+        for h_c in health_checks:
+            run_multiple_health_checks(h_c[1].id, [h_c[0].id])
+
 
 
 def run_all_health_checks_for_single_device(device_id: int):    

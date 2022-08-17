@@ -13,21 +13,21 @@
                     </div>
 
                     <table class="table table-striped" id="devices-list-table">
+                        
                         <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Hostname</th>
-                            <th scope="col">Vendor</th>
-                            <th scope="col">Last Health Check</th>
-                        </tr>
-
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Hostname</th>
+                                <th scope="col">Vendor</th>
+                                <th scope="col">Last Health Check</th>
+                                <th scope="col"></th>
+                            </tr>
                         </thead>
 
                         <tbody>
+                            
                             {% for device in devices %}
                                 <tr data-href="">
-                                    <th scope="row">{{ loop.index }}</th>
                                     <td><a href="{{ url_for('devices_blueprint.view_device', device_id=device.id) }}"> {{ device.alias }}</a></td>
                                     <td>{{ device.hostname }}</td>
                                     <td>{{ device.vendor.vendor_name }}</td>
@@ -36,8 +36,14 @@
                                             {{ device.last_healthcheck.strftime('%b %d %Y %-I:%M%p') }}
                                         {% endif %}
                                     </td>
+                                    <td> <a href="{{ url_for('devices_blueprint.create_device', device_id=device.id) }}" class="btn btn-warning">EDIT</a> </td>
+                                    <td> <a 
+                                        href="{{ url_for('devices_blueprint.delete_device_view', device_id=device.id) }}" class="btn btn-danger" 
+                                        onclick="return confirm('Sure you want to remove {{ device.hostname }}?')"
+                                    >DELETE</a> </td>
                                 </tr>
                             {% endfor %}
+
                         </tbody>
 
                     </table>

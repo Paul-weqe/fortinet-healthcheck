@@ -21,8 +21,7 @@ class CreateDeviceForm(FlaskForm):
     hostname = StringField('Device hostname/IP', validators=[DataRequired()], render_kw=INPUT_KW)
     username = StringField('Device username', validators=[DataRequired()], render_kw=INPUT_KW)
     password = StringField('Device password',
-                           widget=PasswordInput(),
-                           validators=[DataRequired()], render_kw=INPUT_KW
+                           widget=PasswordInput(), render_kw=INPUT_KW
                            )
     vendor = SelectField('Vendor', choices=[], render_kw=SELECT_KW)
     port = IntegerField('Port', widget=NumberInput(step=1, min=1, max=65_535), render_kw=INPUT_KW, default=22)
