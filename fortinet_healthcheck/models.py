@@ -5,6 +5,7 @@ from sqlalchemy.sql import func
 from sqlalchemy.ext.hybrid import hybrid_property
 from datetime import datetime
 
+# Defining the User object/class
 # User inherits all the characteristics and variables related to db.Model
 class User(db.Model):
 

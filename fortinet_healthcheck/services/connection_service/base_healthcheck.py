@@ -1,6 +1,6 @@
 from netmiko.fortinet.fortinet_ssh import FortinetSSH
 
-
+# Defining the BaseHealthCheck object
 class BaseHealthCheck:
     
     def __init__(self, connection: FortinetSSH):

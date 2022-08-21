@@ -66,7 +66,10 @@ def run_multiple_health_checks(device_id: int, health_check_ids: list):
     for hc_id in health_check_ids:
         health_check = HealthCheck.query.get(hc_id)
         expected_outputs = get_health_check_expected_outputs(health_check)
+
+        # Creating an instance of the BaseHealthCheck class
         base_health_check = BaseHealthCheck(conn)
+        
         output = base_health_check.run_single_command(health_check.command)
         hc_result = base_health_check.check_result(
             output, expected_outputs, health_check.check_type
