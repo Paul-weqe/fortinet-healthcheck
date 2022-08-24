@@ -11,6 +11,7 @@ from extensions import db
 from dotenv import load_dotenv
 import os
 from flask_apscheduler import APScheduler
+from apscheduler.triggers.interval import IntervalTrigger
 
 load_dotenv()
 
@@ -44,12 +45,11 @@ def create_app():
     scheduler.init_app(app)
     migrate = Migrate(app, db)
     
-
-    @scheduler.task('run_healthchecks', id='do_run_all_healthchecks', seconds=3600)
-    def run_healthchecks():
+    @scheduler.task(IntervalTrigger(seconds=3600), id='do_run_all_healthchecks')
+    def run_healthchecks_scheduler():
         for device in devices_service.get_all_devices():
             health_check_service.run_all_health_checks_for_single_device(device.id)
-
+    
     scheduler.start()
 
 
