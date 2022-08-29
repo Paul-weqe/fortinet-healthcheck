@@ -30,44 +30,58 @@ class User(db.Model):
         return f"<User {self.username}>"
 
 
-# Assume device is a FortiGate
-# create a devices database object and its associated primary key and various columns
-# This is the database model object
-# We declare a database model object with id as the primary key and string fields for
-# alias, hostname, username, and encoded_password
+# Vendor for a specific device (e.g Cisco, Huawei, Fortinet etc...)
+class Vendor(db.Model):
+    __tablename__ = "vendors"
+
+    id = db.Column(db.Integer, primary_key=True)
+    vendor_name = db.Column(db.String(300), unique=True)
+    netmiko_alias = db.Column(db.String(100))
+
+    # relationships
+    devices = db.relationship('Device', cascade="all,delete", backref='vendor', lazy=True)
+    health_checks = db.relationship('HealthCheck', cascade="all, delete", backref='vendor', lazy=True)
+
+
+
+"""
+Assume device is a FortiGate create a devices database object and its associated 
+primary key and various columns. This is the database model object
+We declare a database model object with id as the primary key and string fields for
+alias, hostname, username, and encoded_password
+"""
 class Device(db.Model):
-
     __tablename__ = "devices"
-
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     alias = db.Column(db.String)
     hostname = db.Column(db.String)
-    #vendor = db.Column(db.String(40))
     username = db.Column(db.String)
     port = db.Column(db.Integer)
     encoded_password = db.Column(db.String(100))
     last_healthcheck = db.Column(db.DateTime, nullable=True)
 
-    checks = db.relationship('Check', backref='device', lazy=True, order_by='Check.timestamp.desc()')
-    check_groups = db.relationship('CheckGroup', backref='device', lazy=True, order_by='CheckGroup.timestamp.desc()')
+    # relationships
+    checks = db.relationship('Check', backref='device', cascade="all,delete", lazy=True, order_by='Check.timestamp.desc()')
+    check_groups = db.relationship('CheckGroup', backref='device', cascade="all,delete", lazy=True, order_by='CheckGroup.timestamp.desc()')
 
+    # Foreign Keys
+    vendor_id = db.Column(db.Integer, db.ForeignKey('vendors.id'), nullable=True)
+    
     def __repr__(self):
         return f"<Device {self.hostname}>"
 
 
 """
- RUN
- 
  Each time a healthcheck is run on a device, a number of checks are executed. 
- e.g we can have 5 checks (one for interface, one for uptime etc...)
- 
- Each time we have a run of the healthchecks, we create a checkgroup that contains
- the checks that have been run and their output. If successful or not. 
+ e.g we can have 5 checks (one for interface, one for uptime etc...), then we 
+ have 5 sets of commands and each one of them is stored in the Check. 
+
+ Everytime this check is run, we create a CheckGroup that stores what was 
+ successful and what was not that time it was run.  
  
  We therefore have each of the checks being contained in a checkgroup 
  and each device has multiple check groups. Later on we can see what the output for each 
  of the different healthchecks were depeinding on when it was run. 
- 
 """
 class CheckGroup(db.Model):
 
@@ -75,7 +89,11 @@ class CheckGroup(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, server_default=func.now())
-    checks = db.relationship('Check', backref='check_group', lazy=True)
+
+    # relationshipts
+    checks = db.relationship('Check', backref='check_group', cascade="all,delete", lazy=True)
+    
+    # Foreign Keys
     device_id = db.Column(db.Integer, db.ForeignKey('devices.id'), nullable=True)
 
     @hybrid_property
@@ -93,12 +111,37 @@ class CheckGroup(db.Model):
     @hybrid_property
     def percentage_success(self):
         total_checks = len(self.checks)
+        if total_checks == 0:
+            return 0
         return (self.successful_checks / total_checks) * 100
 
     def __str__(self):
         return f"<CheckGroupId: {self.id}>"
 
 
+"""
+Categories for the healthchecks 
+
+e.g 'security healthcheck', 'interface check' etc...
+"""
+class HealthCheckCategory(db.Model):
+    __tablename__ = "health_check_categories"
+
+    id = db.Column(db.Integer, primary_key=True)
+    category_name = db.Column(db.String(200), unique=True)
+
+    # relationships
+    health_checks = db.relationship('HealthCheck', backref='health_check_category', cascade="all,delete", lazy=True)
+
+
+
+"""
+A specific healthcheck e.g looking through the interfaces. 
+
+It involves running a specific command and getting the output. 
+Everytime the command is run, the output and whether it was successful 
+or not is stored inside the Check class. 
+"""
 class HealthCheck(db.Model):
 
     __tablename__ = "health_checks"
@@ -106,21 +149,30 @@ class HealthCheck(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), unique=True)
     command = db.Column(db.String(300), unique=True)
-
-    # check type ('and', 'or' and 'not')
-    check_type = db.Column(db.String(10))
+    check_type = db.Column(db.String(10)) # check type ('and', 'or' and 'not')
     description = db.Column(db.Text, default="")
 
-    # FKs
-    check_outputs = db.relationship('HealthCheckOutput', backref='health_check', lazy=True)
-    checks = db.relationship('Check', backref='health_check', lazy=True)
+    # relationships
+    check_outputs = db.relationship('HealthCheckOutput', backref='health_check', cascade="all,delete", lazy=True)
+    checks = db.relationship('Check', backref='health_check', cascade="all,delete", lazy=True)
+
+    # Foreign Keys
+    health_check_category_id = db.Column(db.Integer, db.ForeignKey('health_check_categories.id'), nullable=True)
+    vendor_id = db.Column(db.Integer, db.ForeignKey('vendors.id'), nullable=True)
 
     @hybrid_property
     def checks_count(self):
         return len(self.checks)
 
+    @hybrid_property
+    def check_output_text(self):
+        output_str = ""
+        for output in self.check_outputs:
+            output_str += f"{output.expected_output}\n"
+        return output_str
+
     def __repr__(self):
-        return f"<[HealthCheck: {self.name}] [Command: {self.command}]>"
+        return f"<[HealthCheck: {self.name}]>"
 
 
 class HealthCheckOutput(db.Model):
@@ -128,14 +180,13 @@ class HealthCheckOutput(db.Model):
     __tablename__ = "health_check_outputs"
 
     id = db.Column(db.Integer, primary_key=True)
-    health_check_id = db.Column(db.Integer, db.ForeignKey('health_checks.id'), nullable=False)
     expected_output = db.Column(db.String, nullable=False)
 
+    # Foreign Keys
+    health_check_id = db.Column(db.Integer, db.ForeignKey('health_checks.id'), nullable=False)
+    
     def __repr__(self):
         return f"<HealthCheck Output: [{self.expected_output}]>"
-
-
-
 
 class Check(db.Model):
 
@@ -145,7 +196,7 @@ class Check(db.Model):
     timestamp = db.Column(db.DateTime, server_default=func.now())
     is_successful = db.Column(db.Boolean, nullable=True)
 
-    # FOREIGN KEY
+    # Foreign Keys
     device_id = db.Column(db.Integer, db.ForeignKey('devices.id'), nullable=False)
     health_check_id = db.Column(db.Integer, db.ForeignKey('health_checks.id'), nullable=False)
     check_group_id = db.Column(db.Integer, db.ForeignKey('check_groups.id'), nullable=False)

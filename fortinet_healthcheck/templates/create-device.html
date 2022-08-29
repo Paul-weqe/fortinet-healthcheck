@@ -13,7 +13,10 @@
                             {{ form.alias.label }}
                             {{ form.alias }}
                         </div>
-
+                        <div class="mb-3">
+                            {{ form.vendor.label }}
+                            {{ form.vendor }}
+                        </div>
                         <div class="mb-3">
                             {{ form.hostname.label }}
                             {{ form.hostname }}
@@ -34,7 +37,11 @@
                             {{ form.port }}
                         </div>
 
-                        <button type="submit" class="btn btn-success">ADD DEVICE</button>
+                        {% if device_id == None %}
+                            <button type="submit" class="btn btn-success">ADD DEVICE</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-success">UPDATE DEVICE</button>
+                        {% endif %}
                     </form>
                 </div>
 

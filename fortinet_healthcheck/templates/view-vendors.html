@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<div class="container mt-4">
+    
+    <div class="row justify-content-center">
+        <div class="col-8">
+
+            <div class="card">
+                <div class="card-header">
+                    <h5>Vendors List</h5>
+                    <a href="{{ url_for('vendor_blueprint.create_vendor_view') }}" class="btn btn-success">ADD VENDOR</a>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Netmiko Alias</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for vendor in all_vendors %}
+                                <tr>
+                                    <th scope="row">{{ loop.counter }}</th>
+                                    <td>{{ vendor.vendor_name }}</td>
+                                    <td>{{ vendor.netmiko_alias }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock body %}

@@ -8,8 +8,8 @@
 #  to your application. It aims to simplify using SQLAlchemy with Flask by 
 # providing useful defaults and extra helpers that make it easier to accomplish 
 # common tasks.
-
 from flask_sqlalchemy import SQLAlchemy
 
 # Creating an instance of the SQLAlchemy object
 db = SQLAlchemy()
+

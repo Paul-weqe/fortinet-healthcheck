@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, flash, url_for, redirect
-from fortinet_healthcheck.services import health_check_service, devices_service
+from fortinet_healthcheck.models import HealthCheck
+from fortinet_healthcheck.services import health_check_service, devices_service, vendors_service
 from fortinet_healthcheck.forms import CreateHealthCheckForm
 
 # Initialize an object of a blueprint and pass in the blueprint name 
@@ -21,34 +22,62 @@ def parse_check_in_output(output: str) -> list:
 # Decorators are usually called before the definition of a function you want to decorate.
 
 @health_check_blueprint.route("/create-health-check", methods=['GET', 'POST'])
-def create_health_check_view():
+@health_check_blueprint.route("/edit-health-check/<healthcheck_id>", methods=['GET', 'POST'])
+def create_health_check_view(healthcheck_id = None):
     form = CreateHealthCheckForm()
-
+    
+    h_c = None
+    if healthcheck_id is not None:
+        h_c = HealthCheck.query.get(healthcheck_id)
+        form = CreateHealthCheckForm(
+            name=h_c.name, command=h_c.command, check_type=h_c.check_type, 
+            vendor=h_c.vendor_id, description=h_c.description, check_result=h_c.check_output_text 
+        )
+    
+    VENDOR_CHOICES = list(vendors_service.get_vendor_choices())
+    form.vendor.choices = VENDOR_CHOICES
     if form.validate_on_submit():
         outputs_list = parse_check_in_output(form.check_result.data)
-        health_check = health_check_service.create_health_check(
-            name=form.name.data, command=form.command.data, check_type=form.check_type.data,
-            description=form.description.data, check_outputs=outputs_list
-        )
-        flash('success', f'successfully created health check {health_check.name}')
-        return redirect(url_for('auth_blueprint.home_page'))
-    return render_template('create-health-check.html', form=form)
+        
+
+        if healthcheck_id is not None:    
+            health_check = health_check_service.edit_healthcheck(
+                health_check_id=healthcheck_id, name=form.name.data, command=form.command.data, 
+                check_type=form.check_type.data, description=form.description.data, 
+                check_outputs=outputs_list, vendor_id=form.vendor.data
+            )
+            flash('success', f'successfully edited {health_check.name}')
+            return redirect(url_for('health_check_blueprint.view_health_checks'))
+        else:
+            health_check = health_check_service.create_health_check(
+                name=form.name.data, command=form.command.data, check_type=form.check_type.data,
+                description=form.description.data, check_outputs=outputs_list, vendor_id=form.vendor.data
+            )
+            flash('success', f'successfully created health check {health_check.name}')
+            return redirect(url_for('health_check_blueprint.view_health_checks'))
+        
+
+    return render_template('create-health-check.html', form=form, hc_id=healthcheck_id)
 
 
 @health_check_blueprint.route('/view-health-checks', methods=['GET', 'POST'])
 def view_health_checks():
-    form = CreateHealthCheckForm()
     check_groups = health_check_service.get_all_health_check_groups()
+    health_checks = health_check_service.get_all_health_checks()
+
+    form = CreateHealthCheckForm()
+    VENDOR_CHOICES = list(vendors_service.get_vendor_choices())
+    form.vendor.choices = VENDOR_CHOICES
 
     if form.validate_on_submit():
         outputs_list = parse_check_in_output(form.check_result.data)
         health_check = health_check_service.create_health_check(
             name=form.name.data, command=form.command.data, check_type=form.check_type.data,
-            description=form.description.data, check_outputs=outputs_list
+            description=form.description.data, check_outputs=outputs_list, vendor_id=form.vendor.data
         )
         flash('success', f'successfully created health check {health_check.name}')
-        return redirect(url_for('auth_blueprint.home_page'))
-    return render_template('view-health-checks.html', form=form, check_groups=check_groups)
+        return redirect(url_for('health_check_blueprint.view_health_checks'))
+    return render_template('view-health-checks.html', form=form, check_groups=check_groups, health_checks=health_checks)
 
 
 @health_check_blueprint.route('/run-device-health-check/<device_id>')
@@ -63,6 +92,17 @@ def run_all_health_checks():
 
     for device in devices:
         health_check_service.run_all_health_checks_for_single_device(device.id)
+        
+    return redirect(url_for('health_check_blueprint.view_health_checks'))
 
-    result = health_check_service.run_all_health_checks_for_single_device()
+@health_check_blueprint.route('/delete-health-check/<healthcheck_id>')
+def delete_healthcheck_view(healthcheck_id):
+    health_check_service.delete_healthcheck(healthcheck_id)
+    flash("danger", "Succesfully deleted healthcheck")
+    return redirect(url_for('health_check_blueprint.view_health_checks'))
+
+
+@health_check_blueprint.route('/run-checks-for-single-healthcheck/<healthcheck_id>')
+def run_single_healthcheck(healthcheck_id: int):
+    health_check_service.run_checks_for_healthcheck(healthcheck_id)
     return redirect(url_for('health_check_blueprint.view_health_checks'))

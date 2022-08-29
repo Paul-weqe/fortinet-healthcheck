@@ -25,6 +25,11 @@
                         </div>
 
                         <div class="mb-3">
+                            {{ form.vendor.label }}
+                            {{ form.vendor }}
+                        </div>
+
+                        <div class="mb-3">
                             {{ form.check_type.label }}
                             {{ form.check_type }}
                         </div>
@@ -34,7 +39,12 @@
                             {{ form.check_result }}
                         </div>
 
-                        <button type="submit" class="btn btn-success">CREATE HEALTHCHECK</button>
+                        {% if hc_id == None %}
+                            <button type="submit" class="btn btn-success">CREATE HEALTHCHECK</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-success">EDIT HEALTHCHECK</button>
+                        {% endif %}
+                        
                     </form>
                 </div>
             </div>

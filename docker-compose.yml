@@ -8,21 +8,11 @@ version: "3.8"
 # server, 5000.
 
 services:
-  app:
-    build: .
-    ports:
-      - "5000:5000"
-    env_file:
-      - .env
-    depends_on:
-      - db
-    volumes:
-      - .:/code
 
-# The volumes key above mounts the project directory 
-# (current directory) on the host to /code inside the 
-# container, allowing you to modify the code on the fly, 
-# without having to rebuild the image. 
+  # The volumes key above mounts the project directory 
+  # (current directory) on the host to /code inside the 
+  # container, allowing you to modify the code on the fly, 
+  # without having to rebuild the image. 
 
   db:
     image: postgres:13.2
@@ -30,6 +20,28 @@ services:
       - ../data:/var/lib/postgresql/data
     env_file:
       - .env
+  
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    environment:
+      - FLASK_DEBUG=1
+      - APP_SETTINGS=project.server.config.DevelopmentConfig
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - .:/code
+    command: python run.py
+  
+  redis:
+    image: redis:7.0.4-alpine
+
+  
+
 
 # The image option above specifies what Docker image to use. 
 # Here we're using version 13.2 of the official Postgres image.

@@ -5,12 +5,46 @@
     <div class="container-fluid mt-4">
         <div class="row">
 
+            <div class="col-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>LIST OF HEALTH CHECKS</h5>
+                        <a class="btn btn-success" href="{{ url_for('health_check_blueprint.run_all_health_checks') }}" class="mt-1">Run all Healthchecks</a>
+                    </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Vendor</th>
+                                    <th scope="col"></th>
+                                    <th scope="col"></th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for health_check in health_checks %}
+                                    <tr>
+                                        <th scope="row">{{ loop.index }}</th>
+                                        <td>{{ health_check.name }}</td>
+                                        <td>{{ health_check.vendor.vendor_name }}</td>
+                                        <td><a href="{{ url_for('health_check_blueprint.run_single_healthcheck', healthcheck_id=health_check.id) }}" class="btn btn-success">RUN</a></td>
+                                        <td><a href="{{ url_for('health_check_blueprint.delete_healthcheck_view', healthcheck_id=health_check.id) }}" class="btn btn-danger">DELETE</a></td>
+                                        <td><a href="{{ url_for('health_check_blueprint.create_health_check_view', healthcheck_id=health_check.id) }}" class="btn btn-warning">EDIT</a></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             <div class="col-4">
                 <div class="card">
 
                     <div class="card-header">
-                        PREVIOUS RUNS<br>
-                        <a href="{{ url_for('health_check_blueprint.run_all_health_checks') }}" class="mt-1">Rerun all Checks</a>
+                        PREVIOUS RUNS
                     </div>
 
                     <div class="card-body">
@@ -42,51 +76,7 @@
                 </div>
             </div>
 
-            <div class="col-4">
-
-            </div>
-
-            <div class="col-4">
-                <div class="card">
-                    <div class="card-header">
-                        ADD HEALTH CHECK
-                    </div>
-
-                    <div class="card-body">
-                        <form method="post">
-                            {{ form.hidden_tag() }}
-
-                            <div class="mb-3">
-                                {{ form.name.label }}
-                                {{ form.name }}
-                            </div>
-
-                            <div class="mb-3">
-                                {{ form.command.label }}
-                                {{ form.command }}
-                            </div>
-
-                            <div class="mb-3">
-                                {{ form.check_type.label }}
-                                {{ form.check_type }}
-                            </div>
-
-                            <div class="mb-3">
-                                {{ form.check_result }}
-                            </div>
-
-                            <div class="mb-3">
-                                {{ form.description.label }}
-                                {{ form.description }}
-                            </div>
-
-                            <button type="submit" class="btn btn-success">SAVE</button>
-                        </form>
-                    </div>
-
-                </div>
-            </div>
-
+            
         </div>
     </div>
 

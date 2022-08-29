@@ -1,11 +1,13 @@
 from .auth import auth_blueprint
 from .devices import device_blueprint
 from .health_checks import health_check_blueprint
+from .vendor import vendor_blueprint
 
 # Blueprints aid in organizing components of our web applications into distinct components
 
 BLUEPRINTS = [
     auth_blueprint,
     device_blueprint,
-    health_check_blueprint
+    health_check_blueprint, 
+    vendor_blueprint
 ]

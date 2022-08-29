@@ -5,8 +5,7 @@
 FROM python:3.8.13
 
 # Execute an arbitrary command in the context of the container.
-RUN apt-get update
-
+RUN apt update
 # The WORKDIR command sets a default directory where the 
 # application is going to be installed.
 WORKDIR /code
@@ -23,11 +22,9 @@ RUN pip install -r requirements.txt
 
 # The EXPOSE command configures the port that this container 
 # will be using for its server.
-EXPOSE 5000
 
 # Copy the current directory . in the project to the 
 # workdir . in the image.
 COPY . .
 
 # Set the default command for the container to flask run
-CMD ["flask", "run"]
