@@ -40,10 +40,13 @@ def create_app():
     app = Flask(__name__, template_folder='fortinet_healthcheck/templates',
                 static_folder='fortinet_healthcheck/static',
                 static_url_path='/static/')
+    app.config.from_object(Config)
     
     db.init_app(app)
+    migrate = Migrate(app, db, compare_type=True)
+    migrate.init_app(app, db)
+
     scheduler.init_app(app)
-    migrate = Migrate(app, db)
     
     @scheduler.task(IntervalTrigger(seconds=3600), id='do_run_all_healthchecks')
     def run_healthchecks_scheduler():
@@ -54,9 +57,11 @@ def create_app():
 
 
     # Get configuration from environment variables
-    app.config_class(Config())
+    
 
     # REGISTER BLUEPRINTS
     for blueprint in blueprints.BLUEPRINTS:
         app.register_blueprint(blueprint)
     return app
+
+
